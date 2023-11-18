@@ -2,18 +2,23 @@
     <div class="box">
       <section>
       <p>footer slot</p>
-      <date-picker v-model:value="value3" range placeholder="Select date range">
-        <template #footer="{ emit }">
-          <div style="text-align: left">
-            <button class="mx-btn mx-btn-text" @click="selectNextThreeDay(emit)">
-              Ближайшие 3 дня
-            </button>
-            <button class="mx-btn mx-btn-text" @click="selectTomorrow(emit)">
-              Завтра
-            </button>
-          </div>
-        </template>
-      </date-picker>
+      <div class='dpicker__wrapper'>
+        <input type="text" @focus='open = !open' v-model='value3'>
+        <input type="text" @focus='open = !open' v-model='value3'>
+        <date-picker v-model:value="value3" range placeholder="Select date range" v-model:open="open">
+          <template #footer="{ emit }">
+            <div style="text-align: left">
+              <button class="mx-btn mx-btn-text" @click="selectNextThreeDay(emit)">
+                Ближайшие 3 дня
+              </button>
+              <button class="mx-btn mx-btn-text" @click="selectTomorrow(emit)">
+                Завтра
+              </button>
+            </div>
+          </template>
+        </date-picker>
+      </div>
+      
     </section>
   
   </div>
@@ -27,7 +32,12 @@ import DatePicker from 'vue-datepicker-next';
     components: { DatePicker },
     data() {
       return {
-        value3: null,
+        value3: [null, null],
+        time0: null,
+        time1: null,
+        time2: null,
+        time3: null,
+        open: false,
     };
     },
     methods: {
@@ -51,5 +61,16 @@ import DatePicker from 'vue-datepicker-next';
 </script>
 
 <style>
+.mx-input-wrapper {
+  display: none;
+  width: 0;
+}
+.mx-datepicker-popup {
+  left: 0 !important;
+  margin-top: 10px;
+}
 
+  .dpicker__wrapper {
+    position: relative;
+  }
 </style>
