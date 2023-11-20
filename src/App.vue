@@ -4,21 +4,45 @@
         <div class="tooltip">{{ interval }} {{ interval === 1 ? " сутки" : " суток"}}</div><!-- /.tooltip -->
 
       <div class='dpicker__wrapper'>
-        <input type="text" @focus='open = !open' v-model='startdate'>
-        <input type="text" @focus='open = !open' v-model='enddate'>
-        <date-picker @close='handeClose' v-model:value="value3" range placeholder="Select date range" v-model:open="open">
+       <!--  <input type="text" @focus='open = !open' v-model='startdate'>
+        <input type="text" @focus='open = !open' v-model='enddate'> -->
+        <div class='search_datepicker'>
+          <div @click='open = !open' data-cy="checkIn" class="search-widget-field--occupied__in"><div class="title">Заезд</div><div class="date">{{ startdate ? startdate : "Когда"}}</div></div>
+
+<div @click='open = !open' data-cy="checkOut" class="search-widget-field--occupied__out"><div class="title">Отъезд</div><div class="date">{{ enddate ? enddate : "Когда" }}</div></div>
+        </div>
+
+       
+        
+        <date-picker  
+          :disabled-date="disabledBefore" 
+          @close='handeClose' 
+          v-model:value="value3" 
+          range 
+          placeholder="Select date range" 
+          v-model:open="open">
           <template #footer="{ emit }">
-            <div style="text-align: left">
-              <button class="mx-btn mx-btn-text" @click="selectToday(emit)">
-                Сегодня
-              </button>
-              <button class="mx-btn mx-btn-text" @click="selectTomorrow(emit)">
-                Завтра
-              </button>
-              <button class="mx-btn mx-btn-text" @click="selectWeekend(emit)">
-                Выходные
-              </button>
+            <div class='dpicker__footer'>
+              <div>
+                <div style="text-align: left">
+                  <button class="mx-btn mx-btn-text" @click="selectToday(emit)">
+                    Сегодня
+                  </button>
+                  <button class="mx-btn mx-btn-text" @click="selectTomorrow(emit)">
+                    Завтра
+                  </button>
+                  <button class="mx-btn mx-btn-text" @click="selectWeekend(emit)">
+                    Выходные
+                  </button>
+                </div>
+              </div>
+              <div>
+                <button class="mx-btn mx-btn-text" @click="clearDates(emit)">
+                    Сбросить даты
+                  </button>
+              </div>
             </div>
+            
           </template>
         </date-picker>
       </div>
@@ -117,10 +141,9 @@ import DatePicker from 'vue-datepicker-next';
         emit(date);
       },
       selectWeekend(emit) {
-        const start = this.nextSunday
+        const start = this.getNextSunday()
         const end = new Date();
-        start.setTime(end.getTime());
-        end.setTime(end.getTime() + 1 * 24 * 3600 * 1000);
+        end.setTime(start.getTime() + 1 * 24 * 3600 * 1000);
         const date = [start, end];
         emit(date);
       },
@@ -128,7 +151,13 @@ import DatePicker from 'vue-datepicker-next';
         const tooltip = document.querySelector('.tooltip')
               tooltip.style.top = -999999999 + 'px'
               tooltip.style.left = -999999999 + 'px'
-      }
+      },
+      clearDates() {
+        this.value3 = [null, null]
+      },
+      disabledBefore(date) {
+        return date < new Date(new Date().setHours(0, 0, 0, 0));
+    },
      /*  handleOpen() {
        
         this.cells = document.querySelectorAll("td.cell")
@@ -173,6 +202,11 @@ import DatePicker from 'vue-datepicker-next';
   white-space: normal;
   transform: translateX(-22px) translateY(-20px);
 }
+.dpicker__footer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 /* .tooltip::after {
   content: "";
   border-left: 4px solid transparent;
@@ -183,4 +217,81 @@ import DatePicker from 'vue-datepicker-next';
   margin-left: -4px;
   position: absolute;
 } */
+
+
+.search-widget-field--occupied__in .title, .search-widget-field--occupied__out .title {
+    color: #5a5d63;
+    font-size: 12px;
+    letter-spacing: .2px;
+    line-height: 16px;
+}
+
+.search-widget-field--occupied__in .date, .search-widget-field--occupied__out .date {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    font-weight: bold;
+}
+.search-widget-field--occupied__in, .search-widget-field--occupied__out {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    padding: 0 12px;
+    position: relative;
+    transition: background-color .2s;
+    white-space: nowrap;
+    width: 50%;
+}
+.search_datepicker {
+  display: flex;
+  align-items: center;
+  width: 232px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.mx-datepicker-popup {
+  margin-left: auto;
+  margin-right: auto;
+  right: 0;
+  width: fit-content;
+}
+.mx-calendar-content .cell {
+  align-items: center;
+   /*  border-radius: 100%; */
+    height: 40px;
+    justify-content: center;
+    position: relative;
+    min-width: 40px;
+    font-size: 15px;
+    font-weight: bold;
+    border-bottom: 4px solid #fff;
+}
+.mx-date-row {
+  
+}
+.mx-calendar {
+  width: 320px;
+  padding: 20px;
+}
+.mx-calendar-content {
+  height: unset;
+}
+/* td.cell.in-range {
+  border-radius: 0;
+}
+td.cell.hover-in-range {
+  border-radius: 0;
+} */
+td.cell.not-current-month {
+  opacity: 0;
+}
+body {
+  
+  font-family: sans-serif;
+}
+button.mx-btn.mx-btn-text.mx-btn-icon-double-left, button.mx-btn.mx-btn-text.mx-btn-icon-double-right {
+display: none;
+}
 </style>
