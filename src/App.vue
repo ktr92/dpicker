@@ -1,3 +1,4 @@
+<!-- eslint-disable no-unused-vars -->
 <template>
     <div class="box">
       <section>
@@ -16,6 +17,7 @@
         
         <date-picker  
           :disabled-date="disabledBefore" 
+          @calendar-change='handleChange' 
           @close='handeClose' 
           v-model:value="value3" 
           range 
@@ -68,9 +70,16 @@ import DatePicker from 'vue-datepicker-next';
         intervalvalue: 0,
         open: false,
         langString: 'ru',
+        date: null
     };
     },
     computed: {
+      firstdate() {
+        return this.value3[0]
+      }, 
+      seconddate() {
+        return this.value3[1]
+      },
       startdate() {
         let sdate = this.value3[0]
         return sdate ?  moment(sdate).format('DD MMMM, dd') : ""
@@ -83,6 +92,13 @@ import DatePicker from 'vue-datepicker-next';
        
         return this.intervalvalue
       }
+    },
+    watch: {
+      date(newvalue, oldvalue) {
+
+        console.log(newvalue, oldvalue)
+      },
+      
     },
     mounted() {
       moment.locale('ru');
@@ -114,6 +130,13 @@ import DatePicker from 'vue-datepicker-next';
       });
     },
     methods: {
+       monthDiff(d1, d2) {
+        var months;
+        months = (d2.getFullYear() - d1.getFullYear()) * 12;
+        months -= d1.getMonth();
+        months += d2.getMonth();
+        return months <= 0 ? 0 : months;
+    },
        getNextSunday(date = new Date()) {
         const dateCopy = new Date(date.getTime());
 
@@ -158,6 +181,25 @@ import DatePicker from 'vue-datepicker-next';
       disabledBefore(date) {
         return date < new Date(new Date().setHours(0, 0, 0, 0));
     },
+    addOneMonth(date) {
+      var o = new Date(+date);
+      date.setMonth(date.getMonth() + 1);
+
+      // If have rolled over an extra month, set to last
+      // day of previous month
+      if (date.getDate() != o.getDate()) {
+      date.setDate(0);
+      }
+      console.log(date)
+      return date
+    },
+    handleChange() {
+      // поменять местами кнопки
+   /*   
+     if (this.monthDiff(date[0], date[1]) > 1) {
+      date[0] = this.addOneMonth(date[0])
+     } */
+    }
      /*  handleOpen() {
        
         this.cells = document.querySelectorAll("td.cell")
@@ -293,5 +335,20 @@ body {
 }
 button.mx-btn.mx-btn-text.mx-btn-icon-double-left, button.mx-btn.mx-btn-text.mx-btn-icon-double-right {
 display: none;
+}
+button.mx-btn.mx-btn-text.mx-btn-icon-left {
+    position: absolute;
+    left: 20px;
+}
+button.mx-btn.mx-btn-text.mx-btn-icon-right {
+    position: absolute;
+    right: 20px;
+}
+
+.mx-calendar.mx-calendar-panel-date:first-child button.mx-btn.mx-btn-text.mx-btn-icon-left {
+display: none;
+}
+.mx-calendar.mx-calendar-panel-date:last-child button.mx-btn.mx-btn-text.mx-btn-icon-right {
+  display: none;
 }
 </style>
