@@ -28,13 +28,13 @@
               <div>
                 <div style="text-align: left">
                   <button class="mx-btn mx-btn-text" @click="selectToday(emit)">
-                    Сегодня
+                    Сегодня {{ todayvalue  }}- {{ tomorrowvalue }} {{ tomorrowmonth }} 
                   </button>
                   <button class="mx-btn mx-btn-text" @click="selectTomorrow(emit)">
-                    Завтра
+                    Завтра {{ tomorrowvalue  }}  - {{ daftertomorrowvalue }} {{ daftertomorrowmonth }}
                   </button>
                   <button class="mx-btn mx-btn-text" @click="selectWeekend(emit)">
-                    Выходные
+                    Выходные {{ fstweekvalue  }} - {{ sndweekvalue }} {{ sndweekmonth }}
                   </button>
                 </div>
               </div>
@@ -42,6 +42,17 @@
                 <button class="mx-btn mx-btn-text" @click="clearDates(emit)">
                     Сбросить даты
                   </button>
+              </div>
+            </div>
+            
+          </template>
+          <template #header>
+            <div class='dpicker__header' v-if='!isDatesNull'>
+              <div>
+                <div  class="sc-datepickerext-wrapper-header"><div  class="sc-datepickerext-wrapper-header--tooltip">Выберите даты поездки, чтобы увидеть цены</div></div>
+              </div>
+              <div>
+               
               </div>
             </div>
             
@@ -70,7 +81,8 @@ import DatePicker from 'vue-datepicker-next';
         intervalvalue: 0,
         open: false,
         langString: 'ru',
-        date: null
+        date: null,
+        today: new Date(),
     };
     },
     computed: {
@@ -91,7 +103,42 @@ import DatePicker from 'vue-datepicker-next';
       interval() {
        
         return this.intervalvalue
-      }
+      },
+      todayvalue() {
+        return moment(this.today).format('DD')
+      },
+      todaymonth() {
+        return moment(this.today).format('MMM')
+      },
+    
+      tomorrowvalue() {
+        return moment(this.today.setTime(this.today.getTime() + 1 * 24 * 3600 * 1000)).format('DD')
+      },
+      tomorrowmonth() {
+        return moment(this.today.setTime(this.today.getTime() + 1 * 24 * 3600 * 1000)).format('MMM')
+      },
+      daftertomorrowvalue() {
+        return moment(this.today.setTime(this.today.getTime() + 2 * 24 * 3600 * 1000)).format('DD')
+      },
+      daftertomorrowmonth() {
+        return moment(this.today.setTime(this.today.getTime() + 2 * 24 * 3600 * 1000)).format('MMM')
+      },
+      fstweekvalue() {
+        return moment(this.getNextSunday()).format('DD')
+      },
+      sndweekvalue() {
+        return moment(this.getNextSunday().getTime() + 1 * 24 * 3600 * 1000).format('DD')
+      },
+      fstweekmonth() {
+        return moment(this.getNextSunday()).format('MMM')
+      },
+      sndweekmonth() {
+        return moment(this.getNextSunday().getTime() + 1 * 24 * 3600 * 1000).format('MMM')
+      },
+      isDatesNull() {
+       
+        return this.value3[1]
+      },
     },
     watch: {
       date(newvalue, oldvalue) {
@@ -100,7 +147,7 @@ import DatePicker from 'vue-datepicker-next';
       },
       
     },
-    mounted() {
+    beforeMount() {
       moment.locale('ru');
       let _this = this
       document.addEventListener("mouseover", function(e){
@@ -178,6 +225,7 @@ import DatePicker from 'vue-datepicker-next';
       clearDates() {
         this.value3 = [null, null]
       },
+     
       disabledBefore(date) {
         return date < new Date(new Date().setHours(0, 0, 0, 0));
     },
@@ -314,7 +362,7 @@ import DatePicker from 'vue-datepicker-next';
   
 }
 .mx-calendar {
-  width: 320px;
+  width: 340px;
   padding: 20px;
 }
 .mx-calendar-content {
@@ -351,4 +399,47 @@ display: none;
 .mx-calendar.mx-calendar-panel-date:last-child button.mx-btn.mx-btn-text.mx-btn-icon-right {
   display: none;
 }
+.sc-datepickerext-wrapper-header {
+  background: #fff6c4;
+    color: #000;
+    overflow: hidden;
+    padding: 9px 20px;
+    align-items: center;
+    color: #000;
+    display: flex;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 17px;
+    font-weight: bold;
+}
+.dpicker__footer button.mx-btn.mx-btn-text {
+  align-items: center;
+    background-color: #f1f3fb;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-right: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    height: 30px;
+    justify-content: center;
+    letter-spacing: .2px;
+    line-height: 16px;
+    margin-left: 0;
+    margin-bottom: 2px;
+    padding: 0 10px;
+}
+
+.mx-calendar-header-label .mx-btn-text {
+  color: #000;
+  font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+
+
 </style>
