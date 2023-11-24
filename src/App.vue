@@ -10,7 +10,7 @@
         <div class='search_datepicker'>
           <div @click='open = !open' data-cy="checkIn" class="search-widget-field--occupied__in"><div class="title">Заезд</div><div class="date">{{ startdate ? startdate : "Когда"}}</div></div>
 
-<div @click='open = !open' data-cy="checkOut" class="search-widget-field--occupied__out"><div class="title">Отъезд</div><div class="date">{{ enddate ? enddate : "Когда" }}</div></div>
+          <div @click='open = !open' data-cy="checkOut" class="search-widget-field--occupied__out"><div class="title">Отъезд</div><div class="date">{{ enddate ? enddate : "Когда" }}</div></div>
         </div>
 
        
@@ -22,7 +22,9 @@
           v-model:value="value3" 
           range 
           placeholder="Select date range" 
-          v-model:open="open">
+          v-model:open="open"
+          @change="handleChange"
+          >
           <template #footer="{ emit }">
             <div class='dpicker__footer'>
               <div>
@@ -47,14 +49,23 @@
             
           </template>
           <template #header>
-            <div class='dpicker__header' v-if='!isDatesNull'>
-              <div>
-                <div  class="sc-datepickerext-wrapper-header"><div  class="sc-datepickerext-wrapper-header--tooltip">Выберите даты поездки, чтобы увидеть цены</div></div>
-              </div>
-              <div>
-               
-              </div>
-            </div>
+            <div class="sc-modal-header onlymobile">
+              <div class='dpcikerclose' @click='open = false'>123123<span class="icon-app-arrow-left"></span></div>
+            
+              <span class="sc-modal-title"></span>
+              <div class="sc-modal-side-action">
+              <div data-v-1166afda="" class="main-datepicker-reset" @click='clearDates(emit)' style="">Сбросить даты</div></div></div>
+                <div class='dpicker__header' v-if='!isDatesNull'>
+                  <div>
+                    <div  class="sc-datepickerext-wrapper-header"><div  class="sc-datepickerext-wrapper-header--tooltip">Выберите даты поездки, чтобы увидеть цены</div></div>
+                  </div>
+                  <div>
+                  
+                  </div>
+                </div>
+                <div v-else class='dpicker_values'>
+                  {{ startdate }} - {{ enddate }} /  <span v-if='daysNumber'>{{ daysNumber }} {{ daysNumber === 1 ? " сутки" : " суток"  }}</span>
+                </div>
             
           </template>
         </date-picker>
@@ -83,6 +94,8 @@ import DatePicker from 'vue-datepicker-next';
         langString: 'ru',
         date: null,
         today: new Date(),
+        lastelement: false,
+        ddnumber: document.querySelectorAll('td.cell.in-range:not(.not-current-month)').length + 1
     };
     },
     computed: {
@@ -94,11 +107,11 @@ import DatePicker from 'vue-datepicker-next';
       },
       startdate() {
         let sdate = this.value3[0]
-        return sdate ?  moment(sdate).format('DD MMMM, dd') : ""
+        return sdate ?  moment(sdate).format('DD MMM, dd') : ""
       },
       enddate() {
         let edate = this.value3[1]
-        return edate ?  moment(edate).format('DD MMMM, dd') : ""
+        return edate ?  moment(edate).format('DD MMM, dd') : ""
       },
       interval() {
        
@@ -137,8 +150,12 @@ import DatePicker from 'vue-datepicker-next';
       },
       isDatesNull() {
        
-        return this.value3[1]
+        return this.value3[0]
       },
+      daysNumber() {
+       return this.value3[1] ? moment(this.value3[1]).diff(moment(this.value3[0]), 'days') : null
+      },
+
     },
     watch: {
       date(newvalue, oldvalue) {
@@ -150,6 +167,10 @@ import DatePicker from 'vue-datepicker-next';
     beforeMount() {
       moment.locale('ru');
       let _this = this
+      document.addEventListener("click", function(e){
+        _this.checklasslist(e)
+        
+      })
       document.addEventListener("mouseover", function(e){
         let int = null
         if (int) {
@@ -177,6 +198,20 @@ import DatePicker from 'vue-datepicker-next';
       });
     },
     methods: {
+      checklasslist(e) {
+        this.lastelement = false
+        if ( e.target) {
+          if (e.target.closest('.cell')) {
+            this.lastelement = true
+          }
+          else {
+            if (e.target.classList.contains('.cell')) {
+              this.lastelement = true
+            }
+          }
+            
+          }
+      },
        monthDiff(d1, d2) {
         var months;
         months = (d2.getFullYear() - d1.getFullYear()) * 12;
@@ -218,12 +253,19 @@ import DatePicker from 'vue-datepicker-next';
         emit(date);
       },
       handeClose() {
+        if (this.lastelement) {
+          this.open = true
+        }
         const tooltip = document.querySelector('.tooltip')
               tooltip.style.top = -999999999 + 'px'
               tooltip.style.left = -999999999 + 'px'
       },
       clearDates() {
         this.value3 = [null, null]
+        document.querySelectorAll('.cell').forEach(item => {
+          item.classList.remove('active')
+          item.classList.remove('in-range')
+        })
       },
      
       disabledBefore(date) {
@@ -241,7 +283,11 @@ import DatePicker from 'vue-datepicker-next';
       console.log(date)
       return date
     },
-    handleChange() {
+    // eslint-disable-next-line no-unused-vars
+    handleChange(value, type) {
+
+      this.open = true
+      this.ddnumber = document.querySelectorAll('td.cell.in-range:not(.not-current-month)').length + 1
       // поменять местами кнопки
    /*   
      if (this.monthDiff(date[0], date[1]) > 1) {
@@ -260,6 +306,7 @@ import DatePicker from 'vue-datepicker-next';
 </script>
 
 <style>
+
 .mx-input-wrapper {
   display: none;
   width: 0;
@@ -439,7 +486,7 @@ display: none;
     font-weight: bold;
     text-transform: capitalize;
 }
-
+@import '@/assets/custom.css';
 
 
 </style>
