@@ -238,7 +238,7 @@
 .sc-modal-ok {
   color: #fff;
   font-weight: bold;
-  background: linear-gradient(0deg,rgba(0,0,0,.05),rgba(0,0,0,.05)),#f51449;
+  background:  rgb(68, 68, 68);
   padding: 5px 10px 3px 10px;
   line-height: 16px;
   border-radius: 50px 50px 50px 50px;

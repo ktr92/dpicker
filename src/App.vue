@@ -72,7 +72,7 @@
                   <div  class='dpicker_values'>
                   {{ startdate }} - {{ enddate }} /  <span v-if='daysNumber'>{{ daysNumber }} {{ daysNumber === 1 ? " сутки" : " суток"  }}</span>
                 </div>
-                  <div class='sc-modal-ok onlydesktop' @click='open = false'>ОК</div>
+                  <div class='sc-modal-ok onlydesktop' @click='open = false'>Сохранить</div>
                 </div>
               </div>
             
