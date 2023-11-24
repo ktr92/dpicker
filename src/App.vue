@@ -27,33 +27,37 @@
           >
           <template #footer="{ emit }">
             <div class='dpicker__footer'>
-              <div>
+              <div class='dpicker__fnav'>
                 <div style="text-align: left">
                   <button class="mx-btn mx-btn-text" @click="selectToday(emit)">
-                    Сегодня {{ todayvalue  }}- {{ tomorrowvalue }} {{ tomorrowmonth }} 
+                    Сегодня <span class='onlydesktop'> {{ todayvalue  }} - {{ tomorrowvalue }} {{ tomorrowmonth }} </span>
                   </button>
                   <button class="mx-btn mx-btn-text" @click="selectTomorrow(emit)">
-                    Завтра {{ tomorrowvalue  }}  - {{ daftertomorrowvalue }} {{ daftertomorrowmonth }}
+                    Завтра <span class='onlydesktop'> {{ tomorrowvalue  }}  - {{ daftertomorrowvalue }} {{ daftertomorrowmonth }} </span>
                   </button>
                   <button class="mx-btn mx-btn-text" @click="selectWeekend(emit)">
-                    Выходные {{ fstweekvalue  }} - {{ sndweekvalue }} {{ sndweekmonth }}
+                    Выходные <span class='onlydesktop'>  {{ fstweekvalue  }} - {{ sndweekvalue }} {{ sndweekmonth }} </span>
                   </button>
                 </div>
               </div>
               <div>
-                <button class="mx-btn mx-btn-text" @click="clearDates(emit)">
+                <button class="mx-btn mx-btn-text clearfooter" @click="clearDates(emit)">
                     Сбросить даты
                   </button>
               </div>
+            </div>
+            <div>
+              <div data-v-1166afda="" class="main-datepicker-calendar--footer" style=""><button @click='open = false' data-v-1166afda="" class="button button_size_md button_dark-gray button_w-100">Сохранить</button></div>
             </div>
             
           </template>
           <template #header>
             <div class="sc-modal-header onlymobile">
-              <div class='dpcikerclose' @click='open = false'>123123<span class="icon-app-arrow-left"></span></div>
+              <div class='dpcikerclose' @click='open = false'>Назад<span class="icon-app-arrow-left"></span></div>
             
               <span class="sc-modal-title"></span>
               <div class="sc-modal-side-action">
+              
               <div data-v-1166afda="" class="main-datepicker-reset" @click='clearDates(emit)' style="">Сбросить даты</div></div></div>
                 <div class='dpicker__header' v-if='!isDatesNull'>
                   <div>
@@ -63,9 +67,14 @@
                   
                   </div>
                 </div>
-                <div v-else class='dpicker_values'>
+                <div v-else>
+                <div class='dpicker__nav' >
+                  <div  class='dpicker_values'>
                   {{ startdate }} - {{ enddate }} /  <span v-if='daysNumber'>{{ daysNumber }} {{ daysNumber === 1 ? " сутки" : " суток"  }}</span>
                 </div>
+                  <div class='sc-modal-ok onlydesktop' @click='open = false'>ОК</div>
+                </div>
+              </div>
             
           </template>
         </date-picker>
@@ -118,23 +127,29 @@ import DatePicker from 'vue-datepicker-next';
         return this.intervalvalue
       },
       todayvalue() {
-        return moment(this.today).format('DD')
+        return moment(new Date()).format('DD')
+      },
+      tomorrowday() {
+        return new Date().setTime(new Date().getTime() + 1 * 24 * 3600 * 1000)
+      },
+      daftertomorrowday() {
+        return new Date().setTime(new Date().getTime() + 1 * 24 * 3600 * 1000)
       },
       todaymonth() {
-        return moment(this.today).format('MMM')
+        return moment(new Date()).format('MMM')
       },
     
       tomorrowvalue() {
-        return moment(this.today.setTime(this.today.getTime() + 1 * 24 * 3600 * 1000)).format('DD')
+        return moment(this.tomorrowday).format('DD')
       },
       tomorrowmonth() {
-        return moment(this.today.setTime(this.today.getTime() + 1 * 24 * 3600 * 1000)).format('MMM')
+        return moment(new Date().setTime(new Date().getTime() + 1 * 24 * 3600 * 1000)).format('MMM')
       },
       daftertomorrowvalue() {
-        return moment(this.today.setTime(this.today.getTime() + 2 * 24 * 3600 * 1000)).format('DD')
+        return moment(this.daftertomorrowday).format('DD')
       },
       daftertomorrowmonth() {
-        return moment(this.today.setTime(this.today.getTime() + 2 * 24 * 3600 * 1000)).format('MMM')
+        return moment(new Date().setTime(new Date().getTime() + 2 * 24 * 3600 * 1000)).format('MMM')
       },
       fstweekvalue() {
         return moment(this.getNextSunday()).format('DD')
@@ -169,7 +184,6 @@ import DatePicker from 'vue-datepicker-next';
       let _this = this
       document.addEventListener("click", function(e){
         _this.checklasslist(e)
-        
       })
       document.addEventListener("mouseover", function(e){
         let int = null
@@ -199,14 +213,15 @@ import DatePicker from 'vue-datepicker-next';
     },
     methods: {
       checklasslist(e) {
-        this.lastelement = false
         if ( e.target) {
-          if (e.target.closest('.cell')) {
+          if (e.target.closest('.cell') || e.target.closest('.mx-btn')) {
             this.lastelement = true
           }
           else {
-            if (e.target.classList.contains('.cell')) {
+            if (e.target.classList.contains('cell') || e.target.classList.contains('mx-btn')) {
               this.lastelement = true
+            } else {
+              this.lastelement = false
             }
           }
             
@@ -253,9 +268,12 @@ import DatePicker from 'vue-datepicker-next';
         emit(date);
       },
       handeClose() {
+    
         if (this.lastelement) {
-          this.open = true
+          this.open = true  
+          this.lastelement = false
         }
+        
         const tooltip = document.querySelector('.tooltip')
               tooltip.style.top = -999999999 + 'px'
               tooltip.style.left = -999999999 + 'px'
@@ -486,7 +504,7 @@ display: none;
     font-weight: bold;
     text-transform: capitalize;
 }
-@import '@/assets/custom.css';
+@import '@/assets/custom1.css';
 
 
 </style>

@@ -230,6 +230,41 @@
 .sc-modal-header  {
   display: none;
 }
+.dpicker__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sc-modal-ok {
+  color: #fff;
+  font-weight: bold;
+  background: linear-gradient(0deg,rgba(0,0,0,.05),rgba(0,0,0,.05)),#f51449;
+  padding: 5px 10px 3px 10px;
+  line-height: 16px;
+  border-radius: 50px 50px 50px 50px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+.main-datepicker-calendar--footer[data-v-1166afda] {
+  background-color: #fff;
+  display: none;
+  padding: 5px;
+
+}
+
+.button.button_dark-gray {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  padding: 8px 20px;
+  margin-left: auto;margin-right: auto;
+  background-color: rgb(68, 68, 68);
+  border: 1px solid rgba(0,0,0,.15);
+  color: #fff;
+  
+}
 
 @media (max-width: 1023px) {
   .mx-datepicker-popup {
@@ -589,6 +624,9 @@
 .mx-datepicker-header {
   padding: 0;
 }
+.dpicker__nav {
+  padding: 0 10px;
+}
 .mx-calendar-range {
   position: relative;
 }
@@ -597,9 +635,7 @@ button.mx-btn.mx-btn-text.mx-btn-icon-left {
 }
 .mx-table-date .cell.not-current-month 
 {height: 0;font-size: 0;padding: 0;}
-.mx-datepicker-footer {
-  display: none;
-}
+
 
 body {
   margin: 0;
@@ -614,13 +650,70 @@ body {
   font-weight: bold;
   padding: 5px 0;
   text-align: center;
+  color: #000;
 }
 /* .mx-calendar-content .cell {
   width: 30px !important;
   min-width: 30px !important;
   height: 30px !important;
-} */
+} */ 
 .mx-calendar-content .cell {
   border: none !important;
 }
+
+.main-datepicker-calendar--footer[data-v-1166afda] {
+display: block;
+
 }
+.mx-datepicker-popup {
+  padding-bottom: 90px;
+}
+
+.button.button_dark-gray {
+  display: block;    box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 20px;font-size: 16px;font-weight: bold;
+  text-transform: uppercase;
+  margin-left: auto;margin-right: auto;
+  background-color: rgb(68, 68, 68);
+  border: 1px solid rgba(0,0,0,.15);
+  color: #fff;
+  
+}
+.mx-datepicker-footer {
+  border-top: none;
+}
+.mx-calendar-content .cell {
+  height: 30px !important;
+}
+.mx-datepicker-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  left: 0;right: 0;
+  z-index: 99;
+  background: #fff;
+  padding: 15px;
+  box-shadow: 0 0 4px 0 #757575;    box-sizing: border-box;
+}
+.dpicker__footer {
+ 
+}
+.onlydesktop {
+  display: none !important
+}
+.dpicker__footer button.mx-btn.mx-btn-text {
+  margin-bottom: 0 !important;
+}
+.dpicker__footer {
+  margin-bottom: 5px;
+}
+
+.clearfooter {
+  background-color: rgba(245, 20, 20, 0.4) !important;
+  color: #fff !important;
+  border: none;
+}
+}
+
