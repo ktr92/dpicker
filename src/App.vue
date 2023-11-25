@@ -146,7 +146,7 @@ import DatePicker from 'vue-datepicker-next';
         return moment(new Date().setTime(new Date().getTime() + 1 * 24 * 3600 * 1000)).format('MMM')
       },
       daftertomorrowvalue() {
-        return moment(this.daftertomorrowday).format('DD')
+        return moment(new Date().setTime(new Date().getTime() + 2 * 24 * 3600 * 1000)).format('DD')
       },
       daftertomorrowmonth() {
         return moment(new Date().setTime(new Date().getTime() + 2 * 24 * 3600 * 1000)).format('MMM')
@@ -306,6 +306,9 @@ import DatePicker from 'vue-datepicker-next';
 
       this.open = true
       this.ddnumber = document.querySelectorAll('td.cell.in-range:not(.not-current-month)').length + 1
+
+      document.getElementById('datein').value = this.value3[0]
+      document.getElementById('dateout').value = this.value3[1]
       // поменять местами кнопки
    /*   
      if (this.monthDiff(date[0], date[1]) > 1) {
@@ -504,7 +507,6 @@ display: none;
     font-weight: bold;
     text-transform: capitalize;
 }
-@import '@/assets/custom1.css';
 
 
 </style>

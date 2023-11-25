@@ -7,10 +7,10 @@
     <div class='dpicker__wrapper'>
      <!--  <input type="text" @focus='open = !open' v-model='startdate'>
       <input type="text" @focus='open = !open' v-model='enddate'> -->
-      <div class='search_datepicker'>
-        <div @click='open = !open' data-cy="checkIn" class="search-widget-field--occupied__in"><div class="title"></div><div class="date">{{ startdate ? startdate : "21 ноября"}}</div></div>
-
-<div @click='open = !open' data-cy="checkOut" class="search-widget-field--occupied__out"><div class="title"></div><div class="date">{{ enddate ? enddate : "22 ноября" }}</div></div>
+      <div class='search_datepicker search_datepicker_inner'>
+        <div @click='open = !open' data-cy="checkIn" class="search-widget-field--occupied__in day_inner"><div class="date">{{ startdate ? startdate : "Когда"}}</div></div>
+        - 
+        <div @click='open = !open' data-cy="checkOut" class="search-widget-field--occupied__out day_inner"><div class="date">{{ enddate ? enddate : "Когда" }}</div></div>
       </div>
 
      
@@ -22,39 +22,59 @@
         v-model:value="value3" 
         range 
         placeholder="Select date range" 
-        v-model:open="open">
+        v-model:open="open"
+        @change="handleChange"
+        >
         <template #footer="{ emit }">
           <div class='dpicker__footer'>
-            <div>
+            <div class='dpicker__fnav'>
               <div style="text-align: left">
                 <button class="mx-btn mx-btn-text" @click="selectToday(emit)">
-                  Сегодня {{ todayvalue  }}- {{ tomorrowvalue }} {{ tomorrowmonth }} 
+                  Сегодня <span class='onlydesktop'> {{ todayvalue  }} - {{ tomorrowvalue }} {{ tomorrowmonth }} </span>
                 </button>
                 <button class="mx-btn mx-btn-text" @click="selectTomorrow(emit)">
-                  Завтра {{ tomorrowvalue  }}  - {{ daftertomorrowvalue }} {{ daftertomorrowmonth }}
+                  Завтра <span class='onlydesktop'> {{ tomorrowvalue  }}  - {{ daftertomorrowvalue }} {{ daftertomorrowmonth }} </span>
                 </button>
                 <button class="mx-btn mx-btn-text" @click="selectWeekend(emit)">
-                  Выходные {{ fstweekvalue  }} - {{ sndweekvalue }} {{ sndweekmonth }}
+                  Выходные <span class='onlydesktop'>  {{ fstweekvalue  }} - {{ sndweekvalue }} {{ sndweekmonth }} </span>
                 </button>
               </div>
             </div>
             <div>
-              <button class="mx-btn mx-btn-text" @click="clearDates(emit)">
+              <button class="mx-btn mx-btn-text clearfooter" @click="clearDates(emit)">
                   Сбросить даты
                 </button>
             </div>
           </div>
+          <div>
+            <div data-v-1166afda="" class="main-datepicker-calendar--footer" style=""><button @click='open = false' data-v-1166afda="" class="button button_size_md button_dark-gray button_w-100">Сохранить</button></div>
+          </div>
           
         </template>
         <template #header>
-          <div class='dpicker__header' v-if='!isDatesNull'>
-            <div>
-              <div  class="sc-datepickerext-wrapper-header"><div  class="sc-datepickerext-wrapper-header--tooltip">Выберите даты поездки, чтобы увидеть цены</div></div>
+          <div class="sc-modal-header onlymobile">
+            <div class='dpcikerclose' @click='open = false'>Назад<span class="icon-app-arrow-left"></span></div>
+          
+            <span class="sc-modal-title"></span>
+            <div class="sc-modal-side-action">
+            
+            <div data-v-1166afda="" class="main-datepicker-reset" @click='clearDates(emit)' style="">Сбросить даты</div></div></div>
+              <div class='dpicker__header' v-if='!isDatesNull'>
+                <div>
+                  <div  class="sc-datepickerext-wrapper-header"><div  class="sc-datepickerext-wrapper-header--tooltip">Выберите даты поездки, чтобы увидеть цены</div></div>
+                </div>
+                <div>
+                
+                </div>
+              </div>
+              <div v-else>
+              <div class='dpicker__nav' >
+                <div  class='dpicker_values'>
+                {{ startdate }} - {{ enddate }} /  <span v-if='daysNumber'>{{ daysNumber }} {{ daysNumber === 1 ? " сутки" : " суток"  }}</span>
+              </div>
+                <div class='sc-modal-ok onlydesktop' @click='open = false'>Сохранить</div>
+              </div>
             </div>
-            <div>
-             
-            </div>
-          </div>
           
         </template>
       </date-picker>
@@ -83,6 +103,8 @@ export default {
       langString: 'ru',
       date: null,
       today: new Date(),
+      lastelement: false,
+      ddnumber: document.querySelectorAll('td.cell.in-range:not(.not-current-month)').length + 1
   };
   },
   computed: {
@@ -94,34 +116,40 @@ export default {
     },
     startdate() {
       let sdate = this.value3[0]
-      return sdate ?  moment(sdate).format('DD MMMM, dd') : ""
+      return sdate ?  moment(sdate).format('DD MMM') : moment(new Date()).format('DD MMM')
     },
     enddate() {
       let edate = this.value3[1]
-      return edate ?  moment(edate).format('DD MMMM, dd') : ""
+      return edate ?  moment(edate).format('DD MMM') : moment(new Date()).format('DD MMM')
     },
     interval() {
      
       return this.intervalvalue
     },
     todayvalue() {
-      return moment(this.today).format('DD')
+      return moment(new Date()).format('DD')
+    },
+    tomorrowday() {
+      return new Date().setTime(new Date().getTime() + 1 * 24 * 3600 * 1000)
+    },
+    daftertomorrowday() {
+      return new Date().setTime(new Date().getTime() + 1 * 24 * 3600 * 1000)
     },
     todaymonth() {
-      return moment(this.today).format('MMM')
+      return moment(new Date()).format('MMM')
     },
   
     tomorrowvalue() {
-      return moment(this.today.setTime(this.today.getTime() + 1 * 24 * 3600 * 1000)).format('DD')
+      return moment(this.tomorrowday).format('DD')
     },
     tomorrowmonth() {
-      return moment(this.today.setTime(this.today.getTime() + 1 * 24 * 3600 * 1000)).format('MMM')
+      return moment(new Date().setTime(new Date().getTime() + 1 * 24 * 3600 * 1000)).format('MMM')
     },
     daftertomorrowvalue() {
-      return moment(this.today.setTime(this.today.getTime() + 2 * 24 * 3600 * 1000)).format('DD')
+      return moment(new Date().setTime(new Date().getTime() + 2 * 24 * 3600 * 1000)).format('DD')
     },
     daftertomorrowmonth() {
-      return moment(this.today.setTime(this.today.getTime() + 2 * 24 * 3600 * 1000)).format('MMM')
+      return moment(new Date().setTime(new Date().getTime() + 2 * 24 * 3600 * 1000)).format('MMM')
     },
     fstweekvalue() {
       return moment(this.getNextSunday()).format('DD')
@@ -137,8 +165,12 @@ export default {
     },
     isDatesNull() {
      
-      return this.value3[1]
+      return this.value3[0]
     },
+    daysNumber() {
+     return this.value3[1] ? moment(this.value3[1]).diff(moment(this.value3[0]), 'days') : null
+    },
+
   },
   watch: {
     date(newvalue, oldvalue) {
@@ -150,6 +182,9 @@ export default {
   beforeMount() {
     moment.locale('ru');
     let _this = this
+    document.addEventListener("click", function(e){
+      _this.checklasslist(e)
+    })
     document.addEventListener("mouseover", function(e){
       let int = null
       if (int) {
@@ -177,6 +212,21 @@ export default {
     });
   },
   methods: {
+    checklasslist(e) {
+      if ( e.target) {
+        if (e.target.closest('.cell') || e.target.closest('.mx-btn')) {
+          this.lastelement = true
+        }
+        else {
+          if (e.target.classList.contains('cell') || e.target.classList.contains('mx-btn')) {
+            this.lastelement = true
+          } else {
+            this.lastelement = false
+          }
+        }
+          
+        }
+    },
      monthDiff(d1, d2) {
       var months;
       months = (d2.getFullYear() - d1.getFullYear()) * 12;
@@ -218,12 +268,22 @@ export default {
       emit(date);
     },
     handeClose() {
+  
+      if (this.lastelement) {
+        this.open = true  
+        this.lastelement = false
+      }
+      
       const tooltip = document.querySelector('.tooltip')
             tooltip.style.top = -999999999 + 'px'
             tooltip.style.left = -999999999 + 'px'
     },
     clearDates() {
       this.value3 = [null, null]
+      document.querySelectorAll('.cell').forEach(item => {
+        item.classList.remove('active')
+        item.classList.remove('in-range')
+      })
     },
    
     disabledBefore(date) {
@@ -241,7 +301,15 @@ export default {
     console.log(date)
     return date
   },
-  handleChange() {
+  // eslint-disable-next-line no-unused-vars
+  handleChange(value, type) {
+
+    this.open = true
+    this.ddnumber = document.querySelectorAll('td.cell.in-range:not(.not-current-month)').length + 1
+
+    
+    document.getElementById('datein').value = this.value3[0]
+    document.getElementById('dateout').value = this.value3[1]
     // поменять местами кнопки
  /*   
    if (this.monthDiff(date[0], date[1]) > 1) {
@@ -260,6 +328,7 @@ export default {
 </script>
 
 <style>
+
 .mx-input-wrapper {
 display: none;
 width: 0;
@@ -439,7 +508,6 @@ font-size: 16px;
   font-weight: bold;
   text-transform: capitalize;
 }
-
 
 
 </style>

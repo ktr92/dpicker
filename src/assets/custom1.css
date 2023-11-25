@@ -266,6 +266,13 @@
   
 }
 
+.day_inner {
+  border: none;
+}
+.search_datepicker.search_datepicker_inner {
+  width: 120px;
+}
+
 @media (max-width: 1023px) {
   .mx-datepicker-popup {
     top: 0 !important;
@@ -646,7 +653,7 @@ body {
   width: 100% !important;
 }
 .dpicker_values {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   padding: 5px 0;
   text-align: center;
@@ -715,5 +722,20 @@ display: block;
   color: #fff !important;
   border: none;
 }
+.mx-table-date .cell.not-current-month {
+  height: 0 !important
+}
+.mx-datepicker-popup {
+  box-shadow: none;
+  border: none;
+}
+.mx-calendar {
+ margin: auto;
+}
+.mx-calendar+.mx-calendar {
+  border-left: none;
+}
+
+
 }
 
