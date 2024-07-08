@@ -104,9 +104,13 @@ import DatePicker from 'vue-datepicker-next';
         date: null,
         today: new Date(),
         lastelement: false,
-        ddnumber: document.querySelectorAll('td.cell.in-range:not(.not-current-month)').length + 1
+        ddnumber: document.querySelectorAll('td.cell.in-range:not(.not-current-month)').length + 1,
+        initdatein: null,
+        initdateout: null,
+        loaded: 0
     };
     },
+  
     computed: {
       firstdate() {
         return this.value3[0]
@@ -115,11 +119,12 @@ import DatePicker from 'vue-datepicker-next';
         return this.value3[1]
       },
       startdate() {
-        let sdate = this.value3[0]
+          let sdate = (this.value3[0] ? this.value3[0] : this.initdatein) || null
+        
         return sdate ?  moment(sdate).format('DD MMM, dd') : ""
       },
       enddate() {
-        let edate = this.value3[1]
+        let edate = (this.value3[1] ? this.value3[1] : this.initdateout) || null
         return edate ?  moment(edate).format('DD MMM, dd') : ""
       },
       interval() {
@@ -179,9 +184,24 @@ import DatePicker from 'vue-datepicker-next';
       },
       
     },
+    mounted() {
+      
+    },
     beforeMount() {
       moment.locale('ru');
       let _this = this
+
+      const datein = document.querySelector('#datein').value
+      if (datein) {
+        _this.initdatein = datein
+      }
+      const dateout = document.querySelector('#dateout').value
+      if (dateout) {
+        _this.initdateout = dateout
+      }
+      _this.loaded = 1
+
+
       document.addEventListener("click", function(e){
         _this.checklasslist(e)
       })
