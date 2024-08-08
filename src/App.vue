@@ -97,6 +97,7 @@ import DatePicker from 'vue-datepicker-next';
     components: { DatePicker },
     data() {
       return {
+        disallowed: JSON.parse(document.querySelector('[name=disdates]').value),
         value3: [null, null],
         intervalvalue: 0,
         open: false,
@@ -307,7 +308,11 @@ import DatePicker from 'vue-datepicker-next';
       },
      
       disabledBefore(date) {
-        return date < new Date(new Date().setHours(0, 0, 0, 0));
+
+        const dates = this.disallowed.map(item => new Date(item).setHours(0,0,0,0))
+        const testDate = (element) => date.setHours(0,0,0,0) === element
+
+        return (date < new Date(new Date().setHours(0, 0, 0, 0)) || dates.some(testDate));
     },
     addOneMonth(date) {
       var o = new Date(+date);
